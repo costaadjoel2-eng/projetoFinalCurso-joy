@@ -1,0 +1,3765 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ANRES - Sistema de Gestão Documental</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+:root{
+  --green-900:#0B3424;
+  --green-800:#0F4530;
+  --green-700:#1C6B47;
+  --green-600:#26835A;
+  --gold:#B68D40;
+  --gold-light:#D9BD7E;
+  --bg:#F5F6F3;
+  --paper:#FFFFFF;
+  --ink:#16241F;
+  --ink-soft:#5C6B64;
+  --ink-faint:#8A9890;
+  --line:#E2E7E2;
+  --red:#A8412E;
+  --amber:#B9842B;
+}
+
+*{box-sizing:border-box;}
+
+body{
+  margin:0;
+  font-family:'Inter', Arial, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  display:flex;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+
+h1,h2,h3{
+  font-family:'Source Serif 4', Georgia, serif;
+  letter-spacing:-0.01em;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+  width:272px;
+  min-width:272px;
+  background:linear-gradient(195deg, var(--green-900), #082017);
+  display:flex;
+  flex-direction:column;
+  padding:32px 22px;
+  position:relative;
+}
+
+.sidebar::after{
+  content:"";
+  position:absolute;
+  top:0; right:0;
+  width:3px;
+  height:100%;
+  background:linear-gradient(180deg, var(--gold), transparent 70%);
+  opacity:.7;
+}
+
+.logo-sidebar{
+  text-align:left;
+  margin-bottom:34px;
+  padding-bottom:24px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.logo-sidebar img{
+  width:44px;
+  height:44px;
+  object-fit:contain;
+  border-radius:9px;
+  background:#fff;
+  padding:5px;
+}
+
+.logo-sidebar::after{
+  content:"ANRES";
+  font-family:'Source Serif 4', serif;
+  font-weight:600;
+  font-size:19px;
+  color:#fff;
+  letter-spacing:0.03em;
+}
+
+.sidebar-tag{
+  display:block;
+  color:rgba(255,255,255,.45);
+  font-size:10.5px;
+  text-transform:uppercase;
+  letter-spacing:0.12em;
+  margin:-26px 0 22px 2px;
+  font-weight:600;
+}
+
+.sidebar button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:13px 14px;
+  margin:2px 0;
+  background:transparent;
+  border:none;
+  color:#B9C7BF;
+  font-size:14px;
+  font-weight:500;
+  border-radius:10px;
+  cursor:pointer;
+  transition:.2s ease;
+  text-align:left;
+  font-family:'Inter', sans-serif;
+}
+
+.sidebar button i{
+  width:18px;
+  text-align:center;
+  font-size:14px;
+  opacity:.85;
+}
+
+.sidebar button:hover{
+  background:rgba(255,255,255,.07);
+  color:#fff;
+}
+
+.sidebar hr{
+  border:none;
+  border-top:1px solid rgba(255,255,255,.1);
+  margin:18px 0;
+}
+
+.menu-active{
+  background:rgba(182,141,64,.18) !important;
+  color:var(--gold-light) !important;
+  font-weight:600;
+  border-left:3px solid var(--gold);
+  padding-left:11px !important;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  flex:1;
+  padding:46px 56px;
+  overflow:auto;
+}
+
+.section{display:none}
+
+#dashboard h2,
+.section h2{
+  font-size:22px;
+  font-weight:600;
+  color:var(--ink);
+  margin:0 0 6px;
+}
+
+#dashboard > h2,
+.section > h2{
+  margin-bottom:26px;
+}
+
+/* TOPBAR */
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:40px;
+  padding-bottom:26px;
+  border-bottom:1px solid var(--line);
+}
+
+.welcome::before{
+  content:"ANRES — SISTEMA DE GESTÃO DOCUMENTAL";
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  color:var(--green-700);
+  margin-bottom:10px;
+}
+
+.welcome h1{
+  margin:0;
+  font-size:30px;
+  font-weight:600;
+  color:var(--ink);
+}
+
+.welcome p{
+  color:var(--ink-soft);
+  margin-top:8px;
+  font-size:14px;
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.top-btn{
+  background:var(--paper);
+  color:var(--ink);
+  border:1px solid var(--line);
+  padding:11px 18px;
+  border-radius:10px;
+  cursor:pointer;
+  font-size:13.5px;
+  font-weight:500;
+  box-shadow:0 1px 2px rgba(11,52,36,.04);
+  transition:.2s ease;
+}
+
+.top-btn:hover{
+  border-color:var(--green-700);
+  color:var(--green-800);
+}
+
+.user-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--paper);
+  border:1px solid var(--line);
+  padding:8px 18px 8px 8px;
+  border-radius:10px;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg, var(--green-700), var(--green-900));
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:700;
+  font-size:15px;
+  font-family:'Source Serif 4', serif;
+}
+
+.user-box strong{
+  font-size:13.5px;
+  color:var(--ink);
+}
+
+.user-box small{
+  color:var(--ink-soft);
+  font-size:12px;
+}
+
+/* =========================
+   CARDS / STATS
+========================= */
+
+.cards{
+  display:flex;
+  gap:22px;
+  margin-bottom:32px;
+  flex-wrap:wrap;
+}
+
+.card{
+  background:var(--paper);
+  color:var(--ink);
+  padding:26px 26px 24px;
+  border-radius:14px;
+  flex:1;
+  min-width:200px;
+  border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(11,52,36,.03);
+  position:relative;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:3px;
+  border-radius:14px 14px 0 0;
+  background:linear-gradient(90deg, var(--green-700), var(--gold));
+  opacity:0;
+  transition:.2s ease;
+}
+
+.card:hover::before{ opacity:1; }
+
+.card h2{
+  margin:0;
+  font-size:32px;
+  font-weight:600;
+  color:var(--green-800);
+  font-family:'Source Serif 4', serif;
+}
+
+.card p{
+  margin-top:10px;
+  color:var(--ink-soft);
+  font-size:13px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+
+.card h3{
+  font-family:'Inter', sans-serif;
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--ink);
+  margin-bottom:14px;
+}
+
+.card input{
+  margin-bottom:10px;
+}
+
+.card button{
+  padding:10px 16px;
+  border:none;
+  border-radius:9px;
+  background:var(--green-700);
+  color:#fff;
+  font-weight:600;
+  font-size:13px;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.card button:hover{
+  background:var(--green-800);
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  background:var(--paper);
+  color:var(--ink);
+  border-collapse:collapse;
+  margin-top:22px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(11,52,36,.03);
+}
+
+th,td{
+  padding:15px 14px;
+  border-bottom:1px solid var(--line);
+  text-align:center;
+  font-size:13.5px;
+}
+
+th{
+  background:#F8FAF8;
+  color:var(--ink-soft);
+  font-weight:700;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  border-bottom:1px solid var(--line);
+}
+
+tbody tr{ transition:.15s ease; }
+tbody tr:hover{ background:#FAFBF9; }
+tbody tr:last-child td{ border-bottom:none; }
+
+/* PESQUISA BAR */
+#gestao > div[style*="flex"]{
+  background:var(--paper);
+  border:1px solid var(--line);
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 1px 2px rgba(11,52,36,.03);
+}
+
+#gestao select,
+#gestao input{
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:11px 13px;
+  background:#FBFCFB;
+  font-size:13.5px;
+  max-width:220px;
+}
+
+/* FORM */
+
+input,select{
+  padding:12px;
+  width:100%;
+  box-sizing:border-box;
+}
+
+.form-container{
+  max-width:920px;
+  margin-top:14px;
+  background:var(--paper);
+  border-radius:16px;
+  padding:36px;
+  border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(11,52,36,.03), 0 18px 36px rgba(11,52,36,.05);
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
+
+.form-title{
+  font-size:19px;
+  color:var(--ink);
+  font-weight:600;
+  margin-bottom:2px;
+  font-family:'Source Serif 4', serif;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line);
+}
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.form-group label{
+  color:var(--ink-soft);
+  font-weight:600;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+}
+
+.form-group input,
+.form-group select{
+  padding:13px 14px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:#FBFCFB;
+  color:var(--ink);
+  font-size:14.5px;
+  font-family:'Inter', sans-serif;
+  transition:.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+  outline:none;
+  border-color:var(--green-700);
+  box-shadow:0 0 0 3px rgba(28,107,71,.12);
+  background:#fff;
+}
+
+.form-group.full{
+  width:100%;
+}
+
+.drop{
+  border:2px dashed #C7D2CB;
+  background:#FBFCFB;
+  border-radius:14px;
+  padding:26px;
+  color:var(--ink-soft);
+  transition:.2s ease;
+}
+
+.drop:hover{
+  border-color:var(--green-700);
+  background:#F3F7F4;
+}
+
+.btn{
+  padding:14px 18px;
+  border:none;
+  border-radius:10px;
+  background:var(--green-700);
+  color:#fff;
+  font-size:14.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s ease;
+}
+
+.btn:hover{
+  background:var(--green-800);
+  transform:translateY(-1px);
+}
+
+/* =========================
+   GRÁFICOS
+========================= */
+
+.graficos{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+  margin-top:24px;
+}
+
+.chart-card{
+  background:var(--paper);
+  border-radius:14px;
+  padding:24px;
+  height:350px;
+  border:1px solid var(--line);
+  box-shadow:0 1px 2px rgba(11,52,36,.03);
+}
+
+.chart-card h3{
+  color:var(--ink);
+  margin-bottom:14px;
+  font-size:13.5px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  font-family:'Inter', sans-serif;
+}
+
+.graficos canvas{
+  width:100% !important;
+  height:255px !important;
+  background:transparent;
+}
+
+.continente-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:255px;
+}
+
+.mapa-mundo{
+  width:210px;
+  height:auto;
+  margin-bottom:16px;
+  opacity:.8;
+}
+
+.legenda-continentes{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+}
+
+.legenda-continentes span{
+  background:#F1F5F2;
+  border:1px solid var(--line);
+  color:var(--ink);
+  padding:6px 12px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:500;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(11,52,36,0.55);
+  justify-content:center;
+  align-items:center;
+  backdrop-filter:blur(2px);
+  z-index:9998;
+}
+
+.modal-content{
+  background:var(--paper);
+  padding:30px;
+  width:500px;
+  max-width:92%;
+  border-radius:16px;
+  border:1px solid var(--line);
+  box-shadow:0 28px 60px rgba(0,0,0,.25);
+  color:var(--ink);
+}
+
+.modal-content h3{
+  font-size:19px;
+  margin-bottom:8px;
+  font-family:'Source Serif 4', serif;
+  font-weight:600;
+}
+
+/* TABLE ACTION BUTTONS */
+
+table button{
+  border:none;
+  background:transparent;
+  cursor:pointer;
+  padding:8px;
+  margin:0 2px;
+  border-radius:8px;
+  transition:.2s ease;
+}
+
+.btn-edit{ color:var(--green-700); }
+.btn-edit:hover{ background:rgba(28,107,71,.1); transform:scale(1.12); }
+
+.btn-view{ color:var(--gold); }
+.btn-view:hover{ background:rgba(182,141,64,.15); transform:scale(1.12); }
+
+.btn-delete{ color:var(--red); }
+.btn-delete:hover{ background:rgba(168,65,46,.12); transform:scale(1.12); }
+
+.btn-download{ color:var(--ink-soft); }
+.btn-download:hover{ background:rgba(92,107,100,.12); transform:scale(1.12); }
+
+table i{ font-size:15px; }
+
+/* =========================
+   MODAL FILTROS
+========================= */
+
+.modal-filtros{
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(11,52,36,.5);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  backdrop-filter:blur(2px);
+}
+
+.modal-conteudo{
+  width:430px;
+  max-width:92%;
+  background:var(--paper);
+  border-radius:16px;
+  padding:30px;
+  box-shadow:0 28px 60px rgba(0,0,0,.25);
+  border:1px solid var(--line);
+}
+
+.modal-topo{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:22px;
+}
+
+.modal-topo h2{
+  margin:0;
+  color:var(--green-900);
+  font-size:20px;
+  font-weight:600;
+}
+
+.fechar-modal{
+  font-size:26px;
+  cursor:pointer;
+  color:var(--ink-soft);
+  line-height:1;
+}
+
+.fechar-modal:hover{
+  color:var(--red);
+}
+
+.campo{
+  margin-bottom:18px;
+}
+
+.campo label{
+  display:block;
+  margin-bottom:7px;
+  font-weight:600;
+  color:var(--ink-soft);
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+}
+
+.campo select{
+  width:100%;
+  padding:12px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:#FBFCFB;
+  color:var(--ink);
+}
+
+.modal-footer{
+  margin-top:20px;
+  text-align:right;
+}
+
+.modal-footer button{
+  background:var(--green-700);
+  color:#fff;
+  border:none;
+  padding:12px 22px;
+  border-radius:9px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.modal-footer button:hover{
+  background:var(--green-800);
+}
+
+.light-mode{
+  background:var(--bg);
+  color:var(--ink);
+}
+
+.light-mode .card,
+.light-mode .chart-card{
+  background:var(--paper);
+  color:var(--ink);
+}
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:transparent; }
+::-webkit-scrollbar-thumb{ background:#D2DBD4; border-radius:10px; }
+::-webkit-scrollbar-thumb:hover{ background:#B9C5BC; }
+
+@media (max-width:1100px){
+  .graficos{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:760px){
+  .graficos{ grid-template-columns:1fr; }
+  .cards{ flex-direction:column; }
+  .sidebar{ width:220px; min-width:220px; padding:24px 16px; }
+  .main{ padding:26px 20px; }
+}
+/* ===========================
+   DOCUMENTOS SELECIONADOS
+=========================== */
+
+#listaDocumentos{
+
+    margin-top:15px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.documento-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 15px;
+
+    background:#1e293b;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    color:white;
+
+}
+
+.documento-nome{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-size:14px;
+
+}
+
+.remover-documento{
+
+    background:#ef4444;
+
+    color:white;
+
+    border:none;
+
+    width:28px;
+
+    height:28px;
+
+    border-radius:50%;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.remover-documento:hover{
+
+    background:#dc2626;
+
+    transform:scale(1.1);
+
+}
+.btn-upload{
+
+    width:100%;
+
+    padding:15px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    border:none;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+.btn-upload:hover{
+
+    background:#1d4ed8;
+
+}
+
+.upload-box{
+
+    margin-top:15px;
+
+    border:1px solid #334155;
+
+    border-radius:12px;
+
+    background:#0f172a;
+
+    overflow:hidden;
+
+}
+
+.upload-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 18px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+.upload-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.upload-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.upload-nome{
+
+    color:white;
+
+    font-weight:500;
+
+}
+
+.upload-tamanho{
+
+    color:#94a3b8;
+
+    font-size:13px;
+
+}
+
+.upload-remover{
+
+    cursor:pointer;
+
+    color:#ef4444;
+
+    font-size:18px;
+
+    transition:.2s;
+
+}
+
+.upload-remover:hover{
+
+    transform:scale(1.2);
+
+}
+
+.upload-footer{
+
+    padding:12px 18px;
+
+    background:#1e293b;
+
+    color:#94a3b8;
+
+    font-size:14px;
+
+    font-weight:bold;
+
+}
+/*==============================
+UPLOAD PROGRESS
+==============================*/
+
+.upload-progress{
+
+    display:none;
+
+    margin-top:20px;
+
+}
+
+.upload-text{
+
+    color:#fff;
+
+    margin-bottom:8px;
+
+    font-weight:bold;
+
+}
+
+.progress{
+
+    width:100%;
+
+    height:12px;
+
+    background:#1e293b;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+.progress-bar{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        #22c55e,
+        #3b82f6
+    );
+
+    transition:.25s;
+
+}
+
+.progress-percent{
+
+    margin-top:8px;
+
+    color:#94a3b8;
+
+    text-align:right;
+
+    font-size:14px;
+
+}
+</style>
+
+
+</head>
+
+<body>
+
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <div class="logo-sidebar">
+    <img
+        src="/Imagens/logoANRES.jpeg"
+        alt="ANRES"
+        onerror="this.style.display='none'">
+</div>
+
+  <button class="menu-active" onclick="mostrar('dashboard')">
+     <i class="fa-solid fa-gauge-high"></i> Dashboard
+</button>
+  <button onclick="mostrar('adicionar')">
+     <i class="fa-solid fa-file-circle-plus"></i> Novo Processo
+  </button>
+
+  <button onclick="mostrar('gestao')">
+     <i class="fa-solid fa-folder-open"></i> Gestão
+  </button>
+
+  <button onclick="mostrar('relatorios')">
+     <i class="fa-solid fa-chart-line"></i> Relatórios
+  </button>
+
+  <button onclick="mostrar('notificacao')">
+    <i class="fa-solid fa-bell"></i> Notificações
+  </button>
+
+  <button onclick="mostrar('configuracoes')">
+     <i class="fa-solid fa-gear"></i> Configurações
+  </button>
+
+  <hr>
+
+  <button onclick="logout()" style="margin-top:auto;color:#E8B4A8;">
+    <i class="fa-solid fa-right-from-bracket"></i> Sair
+  </button>
+
+</div>
+<!-- MAIN -->
+<div class="main">
+
+  <div class="topbar">
+
+    <div class="welcome">
+        <h1 id="welcomeText"></h1>
+        <p>Sistema de Gestão Documental.</p>
+    </div>
+
+    <div class="top-actions">
+
+        <button class="top-btn" id="dataHoje"></button>
+
+        <button class="top-btn" onclick="abrirFiltros()">
+    🔎 Filtros
+      </button>
+
+        <div class="user-box">
+            <div class="avatar" id="avatarUser"></div>
+
+            <div>
+                <strong id="userNome"></strong>
+                <br>
+                <small id="userEmail"></small>
+            </div>
+
+        </div>
+
+    </div>
+
+  </div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+<h2>Dashboard</h2>
+
+<div class="cards">
+
+    <div class="card">
+        <h2 id="totalDocs">0</h2>
+        <p>Total Processos</p>
+    </div>
+
+    <div class="card">
+        <h2 id="deferidos">0</h2>
+        <p>Deferidos</p>
+    </div>
+
+    <div class="card">
+        <h2 id="indeferidos">0</h2>
+        <p>Indeferidos</p>
+    </div>
+
+    <div class="card">
+        <h2 id="tramite">0</h2>
+        <p>Em Trâmite</p>
+    </div>
+
+</div>
+
+<div class="graficos">
+
+  <div class="chart-card">
+    <h3>Estado dos Processos</h3>
+    <canvas id="gEstado"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h3>Processos por Ano</h3>
+    <canvas id="graficoAno"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h3>Processos por Género</h3>
+    <canvas id="gGenero"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <h3>Processos por País</h3>
+    <canvas id="gPais"></canvas>
+  </div>
+
+  <div class="chart-card">
+
+    <h3>Processos por Continente</h3>
+
+    <div id="gContinente" class="continente-box">
+
+        
+      <img
+src="../Imagens/mapa-mundo.png"
+class="mapa-mundo">
+
+        <div class="legenda-continentes">
+
+            <span>🌍 África: <b id="africaTotal">0</b></span>
+
+            <span>🌍 Europa: <b id="europaTotal">0</b></span>
+
+            <span>🌎 América: <b id="americaTotal">0</b></span>
+
+            <span>🌏 Ásia: <b id="asiaTotal">0</b></span>
+
+            <span>🌏 Oceania: <b id="oceaniaTotal">0</b></span>
+
+        </div>
+
+    </div>
+
+  </div>
+
+  <div class="chart-card">
+    <h3>Processos por Mês</h3>
+    <canvas id="gMes"></canvas>
+  </div>
+
+</div>
+</div>
+
+<!-- ================================================================
+     FRAGMENTO ATUALIZADO — substitui o bloco <div id="adicionar">...
+     do teu index.html. As funções JS no final também substituem as
+     equivalentes no teu <script> principal (adicionarDocumentos,
+     mostrarListaDocumentos e a validação usada por guardar()).
+================================================================= -->
+
+<!-- ADICIONAR -->
+<div id="adicionar" class="section">
+
+<h2>Novo Processo</h2>
+
+<form id="formProcesso" class="form-container" onsubmit="event.preventDefault(); guardar();" novalidate>
+
+  <div class="form-title">Registo de Processo</div>
+
+  <div class="form-group">
+    <label for="nome">Nome do Requerente</label>
+    <input id="nome" type="text" placeholder="Digite o nome" required>
+  </div>
+
+  <div class="form-group">
+    <label for="delib">Número da Deliberação</label>
+    <input id="delib" type="text" placeholder="Ex: 123/2026" required>
+  </div>
+
+  <div class="form-group">
+    <label for="processo">Número do Processo</label>
+    <input id="processo" type="text" placeholder="Número Processo" required>
+  </div>
+
+  <div class="form-group">
+    <label for="designacao">Designação Completa do Curso</label>
+    <input id="designacao" type="text" placeholder="Designação Completa do Curso" required>
+  </div>
+
+  <div class="form-group">
+    <label for="instituicao">Instituição Emissora do Diploma e/ou do Certificado</label>
+    <input id="instituicao" type="text" placeholder="Instituição Emissora do Diploma e/ou do Certificado" required>
+  </div>
+
+  <div class="form-group">
+    <label for="pais">País Emissor</label>
+    <select id="pais" required></select>
+  </div>
+
+  <div class="form-group">
+    <label for="bi">Número do BI</label>
+    <input id="bi" type="text" placeholder="BI" required minlength="4" maxlength="20">
+  </div>
+
+  <div class="form-group">
+    <label for="dataI">Data Início do Curso</label>
+    <input type="date" id="dataI" required>
+  </div>
+
+  <div class="form-group">
+    <label for="dataC">Data de Conclusão</label>
+    <input type="date" id="dataC" required>
+    <small class="ajuda-campo" id="ajudaDataC">Preencha primeiro a data de início do curso.</small>
+  </div>
+
+  <div class="form-group">
+    <label for="dataEntrada">Data de Entrada</label>
+    <input type="date" id="dataEntrada" required>
+    <small class="ajuda-campo" id="ajudaDataEntrada">Não pode ser anterior à conclusão do curso, nem uma data futura.</small>
+  </div>
+
+  <!-- SELECTS COMPLETOS -->
+
+  <div class="form-group">
+    <label for="tipo">Tipo de Documento</label>
+    <select id="tipo" required>
+      <option value="" disabled selected>Selecione o tipo de documento</option>
+      <option value="Processo Completo">Processo Completo</option>
+      <option value="Documento de Entrada">Documento de Entrada</option>
+      <option value="Certidao Assinada pelo Requerente">Certidão Assinada pelo Requerente</option>
+      <option value="Relatorio de Reconhecimento">Relatório de Reconhecimento</option>
+      <option value="Certidao Original">Certidão Original</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="genero">Género</label>
+    <select id="genero" required>
+      <option value="" disabled selected>Selecione o género</option>
+      <option value="Masculino">Masculino</option>
+      <option value="Feminino">Feminino</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="grau">Grau Académico</label>
+    <select id="grau" required>
+      <option value="" disabled selected>Selecione o grau</option>
+      <option value="Licenciatura">Licenciatura</option>
+      <option value="Mestrado">Mestrado</option>
+      <option value="Doutoramento">Doutoramento</option>
+      <option value="Pos-Graduacao">Pós-Graduação</option>
+      <option value="Especailidade-Medica">Especialidade Médica</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="continente">Continente</label>
+    <select id="continente" disabled>
+      <option value="">Continente automático</option>
+      <option value="Africa">África</option>
+      <option value="Europa">Europa</option>
+      <option value="America">América</option>
+      <option value="Asia">Ásia</option>
+      <option value="Oceania">Oceania</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="estado">Estado do Processo</label>
+    <select id="estado" required>
+      <option value="" disabled selected>Selecione o estado</option>
+      <option value="Deferido">Deferido</option>
+      <option value="Indeferido">Indeferido</option>
+      <option value="Em Trâmite">Em Trâmite</option>
+    </select>
+  </div>
+
+  <div class="form-group full">
+
+    <label for="ficheiro">Documentos do Processo</label>
+
+    <button
+        type="button"
+        class="btn-upload"
+        onclick="document.getElementById('ficheiro').click()"
+        aria-label="Adicionar documentos ao processo">
+
+        📎 Adicionar documentos
+
+    </button>
+
+    <input
+        type="file"
+        id="ficheiro"
+        multiple
+        style="display:none"
+        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+        onchange="adicionarDocumentos(event)">
+
+    <small class="ajuda-campo">
+        Formatos aceites: PDF, JPG, PNG, DOC, DOCX. Máximo 10MB por ficheiro, até 10 ficheiros.
+    </small>
+
+  </div>
+
+  <div class="upload-box">
+
+    <div id="listaDocumentos"></div>
+
+    <div class="upload-footer">
+        <span id="contadorDocumentos">Nenhum documento</span>
+    </div>
+
+  </div>
+
+  <div class="form-group full drop">
+
+    <label>Ou arraste os documentos para aqui</label>
+
+    <div id="dropZone" tabindex="0" role="button" aria-label="Zona para largar documentos, ou usar o botão Adicionar documentos acima">
+        Solte os documentos aqui
+    </div>
+
+  </div>
+
+  <!-- Barra de progresso -->
+  <div class="upload-progress" id="uploadProgress">
+
+    <div class="upload-text">Enviando documentos...</div>
+
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="progress-percent" id="progressPercent">0%</div>
+
+  </div>
+
+  <!-- Mensagens de validação -->
+  <div id="erroFormulario" class="erro-formulario" role="alert" aria-live="assertive" style="display:none"></div>
+
+  <div class="form-group full">
+    <button type="submit" class="btn">Guardar Processo</button>
+  </div>
+
+</form>
+
+</div>
+
+<style>
+.ajuda-campo{
+    display:block;
+    margin-top:6px;
+    font-size:11.5px;
+    color:var(--ink-faint, #8A9890);
+}
+
+.erro-formulario{
+    background:#FCECEA;
+    border:1px solid #E8A99B;
+    color:#7A2E1F;
+    padding:14px 16px;
+    border-radius:10px;
+    font-size:13.5px;
+    line-height:1.6;
+}
+
+.erro-formulario ul{
+    margin:6px 0 0;
+    padding-left:18px;
+}
+</style>
+
+<script>
+
+// =========================
+// LIMITES — TÊM DE BATER CERTO COM O BACKEND (documentoRoutes.js)
+// =========================
+const TIPOS_ACEITES = [
+    "application/pdf",
+    "image/jpeg",
+    "image/png",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+];
+
+const TAMANHO_MAXIMO_MB = 10;
+const MAX_FICHEIROS = 10;
+
+// =========================
+// LIGAÇÃO ENTRE AS TRÊS DATAS
+// =========================
+// Regra de negócio: início do curso ≤ conclusão do curso ≤ data de
+// entrada do processo ≤ hoje. Isto espelha exatamente a validação que
+// o backend faz em validarProcesso.js — o utilizador vê o erro logo no
+// formulário, em vez de descobrir só depois de submeter.
+
+const campoDataI = document.getElementById("dataI");
+const campoDataC = document.getElementById("dataC");
+const campoDataEntrada = document.getElementById("dataEntrada");
+
+const hojeISO = new Date().toISOString().split("T")[0];
+campoDataEntrada.max = hojeISO;
+
+campoDataI.addEventListener("change", () => {
+    if (campoDataI.value) {
+        campoDataC.min = campoDataI.value;
+        if (campoDataC.value && campoDataC.value < campoDataI.value) {
+            campoDataC.value = "";
+        }
+    }
+});
+
+campoDataC.addEventListener("change", () => {
+    if (campoDataC.value) {
+        campoDataEntrada.min = campoDataC.value;
+        if (campoDataEntrada.value && campoDataEntrada.value < campoDataC.value) {
+            campoDataEntrada.value = "";
+        }
+    }
+});
+
+// =========================
+// VALIDAÇÃO DE FICHEIROS NO CLIENTE
+// =========================
+function ficheiroValido(file){
+
+    if (!TIPOS_ACEITES.includes(file.type)) {
+        return `"${file.name}" tem um formato não aceite (aceites: PDF, JPG, PNG, DOC, DOCX).`;
+    }
+
+    if (file.size > TAMANHO_MAXIMO_MB * 1024 * 1024) {
+        return `"${file.name}" excede o tamanho máximo de ${TAMANHO_MAXIMO_MB}MB.`;
+    }
+
+    return null;
+}
+
+// Substitui a função adicionarDocumentos original: agora valida tipo e
+// tamanho antes de aceitar o ficheiro, e respeita o limite de 10.
+function adicionarDocumentos(event){
+
+    const novos = Array.from(event.target.files);
+    const erros = [];
+
+    novos.forEach(file => {
+
+        if (ficheirosSelecionados.length >= MAX_FICHEIROS) {
+            erros.push(`Limite de ${MAX_FICHEIROS} ficheiros atingido — "${file.name}" não foi adicionado.`);
+            return;
+        }
+
+        const erro = ficheiroValido(file);
+
+        if (erro) {
+            erros.push(erro);
+            return;
+        }
+
+        ficheirosSelecionados.push(file);
+    });
+
+    if (erros.length > 0) {
+        mostrarErroFormulario(erros);
+    }
+
+    mostrarListaDocumentos();
+
+    event.target.value = "";
+}
+
+// =========================
+// MOSTRAR ERROS DE VALIDAÇÃO
+// =========================
+function mostrarErroFormulario(mensagens){
+
+    const box = document.getElementById("erroFormulario");
+
+    box.innerHTML = "<strong>Verifique os seguintes campos:</strong><ul>" +
+        mensagens.map(m => `<li>${m}</li>`).join("") +
+        "</ul>";
+
+    box.style.display = "block";
+    box.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function limparErroFormulario(){
+    const box = document.getElementById("erroFormulario");
+    box.style.display = "none";
+    box.innerHTML = "";
+}
+
+// =========================
+// VALIDAÇÃO CLIENTE ANTES DE GUARDAR
+// =========================
+// Espelha as mesmas regras do backend (validarProcesso.js), para dar
+// feedback imediato. O backend continua a validar tudo outra vez — esta
+// validação no cliente é só para uma melhor experiência, nunca a única
+// linha de defesa.
+function validarFormularioProcesso(){
+
+    const erros = [];
+    const form = document.getElementById("formProcesso");
+
+    // Validação nativa do browser (required, minlength, etc.)
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+    }
+
+    if (dataI.value && dataC.value && dataI.value > dataC.value) {
+        erros.push("A data de início do curso não pode ser posterior à data de conclusão.");
+    }
+
+    if (dataC.value && dataEntrada.value && dataC.value > dataEntrada.value) {
+        erros.push("A data de conclusão do curso não pode ser posterior à data de entrada do processo.");
+    }
+
+    if (dataEntrada.value && dataEntrada.value > hojeISO) {
+        erros.push("A data de entrada não pode ser uma data futura.");
+    }
+
+    if (erros.length > 0) {
+        mostrarErroFormulario(erros);
+        return false;
+    }
+
+    limparErroFormulario();
+    return true;
+}
+
+</script>
+</div>
+
+<!-- GESTÃO -->
+<div id="gestao" class="section">
+
+<h2>Processos</h2>
+
+<!-- PESQUISA -->
+<div style="display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap;">
+
+<select id="pesquisaEstado">
+<option value="">Estado</option>
+<option>Deferido</option>
+<option>Indeferido</option>
+<option>Em Trâmite</option>
+</select>
+
+<input id="pesquisaPais" placeholder="País">
+
+<input id="pesquisaNome" placeholder="Nome">
+
+<input id="pesquisaDeliberacao" placeholder="Nº Deliberação">
+
+<button class="btn" onclick="listar()">Pesquisar</button>
+
+</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Nº Deliberação</th>
+<th>Data Entrada</th>
+<th>Nome</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="lista"></tbody>
+</table>
+
+
+
+</div>
+ <div id="relatorios" class="section">
+
+  <h2>Relatórios e Auditoria</h2>
+
+  <div class="cards">
+    <div class="card">
+      <h2 id="totalLogs">0</h2>
+      <p>Total de Ações</p>
+    </div>
+  </div>
+
+  <h3>Histórico de Logs</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Utilizador</th>
+        <th>Ação</th>
+        <th>Descrição</th>
+      </tr>
+    </thead>
+
+    <tbody id="listaLogs"></tbody>
+  </table>
+
+</div>
+<!-- NOTIFICAÇÕES -->
+<div id="notificacao" class="section">
+
+  <h2> Notificação</h2>
+
+  <div class="cards">
+
+    <div class="card">
+      <h2 id="totalNotificacoes">0</h2>
+      <p>Total de Notificações</p>
+    </div>
+
+    <div class="card">
+      <h2 id="naoLidas">0</h2>
+      <p>Não Lidas</p>
+    </div>
+
+    <div class="card">
+      <h2 id="alertas">0</h2>
+      <p>Alertas</p>
+    </div>
+
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data</th>
+        <th>Tipo</th>
+        <th>Mensagem</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+
+    <tbody id="listaNotificacoes"></tbody>
+  </table>
+
+</div>
+<div id="configuracoes" class="section">
+
+    <h2> Configurações</h2>
+
+    <div class="cards">
+
+        <!-- Perfil -->
+        <div class="card">
+            <h3>👤 Perfil</h3>
+
+            <input
+                type="text"
+                id="cfgNome"
+                placeholder="Nome">
+
+            <input
+                type="email"
+                id="cfgEmail"
+                placeholder="Email">
+
+            <button onclick="salvarPerfil()">
+                Guardar Perfil
+            </button>
+        </div>
+
+        <!-- Senha -->
+        <div class="card">
+
+    <h3> Alterar Senha</h3>
+
+    <input
+        type="password"
+        id="senhaAtual"
+        placeholder="Senha Atual">
+
+    <input
+        type="password"
+        id="novaSenha"
+        placeholder="Nova Senha">
+
+    <input
+        type="password"
+        id="confirmarSenha"
+        placeholder="Confirmar Nova Senha">
+
+    <button onclick="alterarSenha()">
+        Alterar Senha
+    </button>
+
+    <p id="msgSenha"></p>
+
+</div>
+        <!-- Tema -->
+        <div class="card">
+            <h3> Aparência</h3>
+
+            <button onclick="alternarTema()">
+                Alternar Tema
+            </button>
+        </div>
+
+        <!-- Sistema -->
+        <div class="card">
+            <h3>Sistema</h3>
+
+            <p><strong>Nome:</strong> ANRES</p>
+            <p><strong>Versão:</strong> 1.0</p>
+            <p><strong>Ano:</strong> 2026</p>
+        </div>
+
+      <div class="card">
+
+    <h3>Backup da Base de Dados</h3>
+
+    <p>
+        Criar uma cópia de segurança completa da base de dados.
+    </p>
+
+    <button onclick="fazerBackup()">
+        Fazer Backup
+      </button>
+
+     </div>
+     <div class="card">
+
+    <h3> Restaurar Backup</h3>
+
+    <input
+        type="file"
+        id="ficheiroBackup"
+        accept=".sql">
+
+    <button onclick="restaurarBackup()">
+        Restaurar Backup
+    </button>
+
+</div>
+    <button
+    type="button"
+    onclick="exportarExcel()">
+
+    Exportar Excel
+
+      </button>
+ 
+    </div>
+   </div>
+</div>
+<!-- =========================
+     MODAL VISUALIZAÇÃO
+========================= -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+
+    <h3>Processo</h3>
+
+    <div id="modalBody"></div>
+
+    <!-- Viewer do documento -->
+    <iframe
+      id="viewer"
+      style="width:100%;height:450px;display:none;border:none;">
+    </iframe>
+
+    <div style="margin-top:10px; text-align:right;">
+      <button class="btn" onclick="fecharModal()">Fechar</button>
+    </div>
+
+  </div>
+</div>
+<!-- ===========================
+     MODAL DE FILTROS
+=========================== -->
+
+<div id="modalFiltros" class="modal-filtros">
+
+    <div class="modal-conteudo">
+
+        <div class="modal-topo">
+
+            <h2>Filtros</h2>
+
+            <span
+                class="fechar-modal"
+                onclick="fecharFiltros()">
+
+                &times;
+
+            </span>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="campo">
+
+                <label>Ano</label>
+
+                <select id="filtroAno">
+
+                    <option value="">Todos</option>
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>País</label>
+
+                <select id="filtroPais">
+
+                    <option value="">Todos</option>
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Estado</label>
+
+                <select id="filtroEstado">
+
+                    <option value="">Todos</option>
+
+                    <option>Deferido</option>
+
+                    <option>Indeferido</option>
+
+                    <option>Em Trâmite</option>
+
+                </select>
+
+            </div>
+
+            <div class="campo">
+
+                <label>Grau Académico</label>
+
+                <select id="filtroGrau">
+
+                    <option value="">Todos</option>
+
+                    <option>Licenciatura</option>
+
+                    <option>Mestrado</option>
+
+                    <option>Doutoramento</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+            <button onclick="aplicarFiltros()">
+
+                Aplicar
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     MODAL CONFIRMAÇÃO DELETE
+========================= -->
+<div class="modal" id="confirmModal">
+  <div class="modal-content">
+
+    <h3 style="color:#d32f2f;">Confirmar eliminação</h3>
+
+    <p>Desejas mesmo eliminar este processo?</p>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:15px;">
+
+      <button class="btn" style="background:#777" onclick="fecharConfirm()">
+        Cancelar
+      </button>
+
+      <button class="btn" style="background:#d32f2f" onclick="confirmarDelete()">
+        Eliminar
+      </button>
+
+    </div>
+
+  </div>
+</div> 
+ 
+
+  </div>
+</div>
+
+<script>
+    
+
+    const drop = document.getElementById("dropZone");
+    const modal = document.getElementById("modal");
+const modalBody = document.getElementById("modalBody");
+
+const nome = document.getElementById("nome");
+const pais = document.getElementById("pais");
+const dataEntrada = document.getElementById("dataEntrada");
+const designacao = document.getElementById("designacao");
+const instituicao = document.getElementById("instituicao");
+const dataI = document.getElementById("dataI");
+const dataC = document.getElementById("dataC");
+const bi = document.getElementById("bi");
+const delib = document.getElementById("delib");
+const processo = document.getElementById("processo");
+const tipo = document.getElementById("tipo");
+const genero = document.getElementById("genero");
+const grau = document.getElementById("grau");
+const estado = document.getElementById("estado");
+const continente = document.getElementById("continente");
+const ficheiro = document.getElementById("ficheiro");
+
+const totalDocs = document.getElementById("totalDocs");
+const deferidos = document.getElementById("deferidos");
+const indeferidos = document.getElementById("indeferidos");
+const tramite = document.getElementById("tramite");
+const confirmModal = document.getElementById("confirmModal");
+
+let chartEstados;
+let chartPais;
+let chartGenero;
+let chartMensal;
+let chartAno;
+
+
+
+const API = "http://localhost:3000/documentos";
+let editarId = null;
+let charts = {};
+let deleteId = null;
+let ficheirosSelecionados = [];
+
+function logout(){
+    localStorage.removeItem("token");
+    localStorage.removeItem("utilizador");
+    window.location.href="login.html";
+}
+
+
+function abrirParaEditar(d){
+
+nome.value = d.nome_requerente;
+pais.value = d.pais_emissor;
+dataEntrada.value = d.data_entrada;
+designacao.value = d.designacao;
+instituicao.value = d.instituicao ;
+dataI.value = d.data_inicio_curso;
+dataC.value = d.data_conclusao_curso;
+bi.value = d.bi;
+
+
+delib.value = d.numero_deliberacao;
+processo.value = d.numero_processo;
+
+tipo.value = d.tipo_documento;
+genero.value = d.genero;
+grau.value = d.grau_academico;
+estado.value = d.estado;
+continente.value = d.continente;
+
+editarId = d.id;
+
+// vai para formulário
+mostrar('adicionar');
+}
+
+function mostrar(id){
+
+  document
+    .querySelectorAll('#dashboard, .section')
+    .forEach(e => e.style.display='none');
+
+  document
+    .getElementById(id)
+    .style.display='block';
+
+  if(id === "relatorios"){
+      carregarLogs();
+  }
+
+  if(id === "notificacao"){
+      carregarNotificacao();
+  }
+  if(id === "configuracoes"){
+    carregarConfiguracoes();
+}
+if(id === "configuracoes"){
+    carregarPerfil();
+}
+}
+// ==========================
+// MOSTRAR DOCUMENTOS
+// ==========================
+
+function mostrarListaDocumentos(){
+
+    const lista =
+        document.getElementById("listaDocumentos");
+
+    const contador =
+        document.getElementById("contadorDocumentos");
+
+    lista.innerHTML = "";
+
+    let total = 0;
+
+    ficheirosSelecionados.forEach((file,index)=>{
+
+        total += file.size;
+
+        let tamanho;
+
+        if(file.size >= 1024 * 1024){
+
+            tamanho =
+                (file.size / 1024 / 1024).toFixed(2) + " MB";
+
+        }else{
+
+            tamanho =
+                (file.size / 1024).toFixed(0) + " KB";
+
+        }
+
+        // Ícone conforme o tipo
+        let icone = "📄";
+
+        if(file.type.startsWith("image/"))
+            icone = "🖼";
+
+        else if(file.type.includes("pdf"))
+            icone = "📕";
+
+        else if(file.type.includes("word"))
+            icone = "📝";
+
+        else if(file.type.includes("excel") || file.type.includes("sheet"))
+            icone = "📊";
+
+        lista.innerHTML += `
+
+            <div class="upload-item">
+
+                <div class="upload-info">
+
+                    <span style="font-size:22px">
+
+                        ${icone}
+
+                    </span>
+
+                    <div>
+
+                        <div class="upload-nome">
+
+                            ${file.name}
+
+                        </div>
+
+                        <div class="upload-tamanho">
+
+                            ${tamanho}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <span
+                    class="upload-remover"
+                    onclick="removerDocumento(${index})">
+
+                    ❌
+
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+    // Atualiza contador
+    if(ficheirosSelecionados.length === 0){
+
+        contador.innerHTML = "Nenhum documento";
+
+    }else{
+
+        let tamanhoTotal;
+
+        if(total >= 1024 * 1024){
+
+            tamanhoTotal =
+                (total / 1024 / 1024).toFixed(2) + " MB";
+
+        }else{
+
+            tamanhoTotal =
+                (total / 1024).toFixed(0) + " KB";
+
+        }
+
+        contador.innerHTML =
+
+            `📁 ${ficheirosSelecionados.length} documento(s) • 💾 ${tamanhoTotal}`;
+
+    }
+
+}
+function mostrarProgresso(){
+
+    document
+        .getElementById("uploadProgress")
+        .style.display="block";
+
+}
+
+function esconderProgresso(){
+
+    document
+        .getElementById("uploadProgress")
+        .style.display="none";
+
+}
+function atualizarProgresso(valor){
+
+    document
+        .getElementById("progressBar")
+        .style.width = valor + "%";
+
+    document
+        .getElementById("progressPercent")
+        .innerHTML = valor + "%";
+
+}
+// ==========================
+// REMOVER DOCUMENTO
+// ==========================
+
+function removerDocumento(index){
+
+    ficheirosSelecionados.splice(index,1);
+
+    mostrarListaDocumentos();
+
+}
+// ==========================
+// ADICIONAR DOCUMENTOS
+// ==========================
+
+function adicionarDocumentos(event){
+
+    const novos =
+        Array.from(event.target.files);
+
+    novos.forEach(file=>{
+
+        ficheirosSelecionados.push(file);
+
+    });
+
+    mostrarListaDocumentos();
+
+    event.target.value="";
+
+}
+async function salvar(){
+
+    const token = localStorage.getItem("token");
+
+    if(!token){
+
+        alert("Sem login!");
+
+        return;
+
+    }
+
+    const form = new FormData();
+
+    form.append("nome_requerente", nome.value);
+    form.append("pais_emissor", pais.value);
+    form.append("data_entrada", dataEntrada.value);
+    form.append("numero_deliberacao", delib.value);
+    form.append("numero_processo", processo.value);
+    form.append("designacao", designacao.value);
+    form.append("instituicao", instituicao.value);
+    form.append("data_inicio_curso", dataI.value);
+    form.append("data_conclusao_curso", dataC.value);
+    form.append("bi", bi.value);
+    form.append("tipo_documento", tipo.value);
+    form.append("genero", genero.value);
+    form.append("grau_academico", grau.value);
+    form.append("estado", estado.value);
+    form.append("continente", continente.value);
+
+    ficheirosSelecionados.forEach(file=>{
+
+        form.append("ficheiros",file);
+
+    });
+
+    mostrarProgresso();
+
+    atualizarProgresso(0);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.open("POST",API,true);
+
+    xhr.setRequestHeader(
+        "Authorization",
+        `Bearer ${token}`
+    );
+
+    // Barra de progresso
+    xhr.upload.onprogress = function(e){
+
+        if(e.lengthComputable){
+
+            const percent =
+                Math.round(
+                    (e.loaded / e.total) * 100
+                );
+
+            atualizarProgresso(percent);
+
+        }
+
+    };
+
+    xhr.onload = function(){
+
+        esconderProgresso();
+
+        if(xhr.status >= 200 && xhr.status < 300){
+
+            alert("Processo guardado com sucesso!");
+
+            ficheirosSelecionados=[];
+
+            mostrarListaDocumentos();
+
+            document.getElementById("ficheiro").value="";
+
+            listar();
+
+            dashboard();
+
+            mostrar("dashboard");
+
+        }else{
+
+            alert("Erro ao guardar o processo.");
+
+        }
+
+    };
+
+    xhr.onerror=function(){
+
+        esconderProgresso();
+
+        alert("Erro de ligação ao servidor.");
+
+    };
+
+    xhr.send(form);
+
+}
+async function guardar(){
+  if (editarId) {
+    await editar();
+  } else {
+    await salvar();
+  }
+}
+
+/* ================= editar ================= */
+
+async function editar() {
+
+  const token = localStorage.getItem("token");
+
+  const dados = {
+    nome_requerente: nome.value,
+    pais_emissor: pais.value,
+    data_entrada: dataEntrada.value,
+    numero_deliberacao: delib.value,
+    numero_processo: processo.value,
+    designacao: designacao.value,
+    instituicao: instituicao.value,
+    data_inicio_curso: dataI.value,
+    data_conclusao_curso: dataC.value,
+    bi: bi.value,
+    tipo_documento: tipo.value,
+    genero: genero.value,
+    grau_academico: grau.value,
+    estado: estado.value,
+    continente: continente.value
+  };
+
+  const res = await fetch(API + "/" + editarId,{
+    method:"PUT",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization:`Bearer ${token}`
+    },
+    body:JSON.stringify(dados)
+  });
+
+  if(!res.ok){
+    console.log(await res.text());
+    alert("Erro ao editar");
+    return;
+  }
+
+  alert("Processo atualizado");
+
+  editarId = null;
+
+  listar();
+  dashboard();
+  mostrar('dashboard');
+}
+/* ================= LISTAR + PESQUISA ================= */
+async function listar() {
+
+const token = localStorage.getItem("token");
+
+const res = await fetch(API, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+});
+
+if (!res.ok) {
+  console.error("Erro ao listar:", await res.text());
+  return;
+}
+
+let data = await res.json();
+
+/* filtros */
+if (pesquisaNome.value)
+  data = data.filter(d =>
+    d.nome_requerente?.toLowerCase().includes(pesquisaNome.value.toLowerCase())
+  );
+
+if (pesquisaPais.value)
+  data = data.filter(d =>
+    d.pais_emissor?.trim().toLowerCase() ==
+    pesquisaPais.value.trim().toLowerCase()
+  );
+
+if (pesquisaEstado.value)
+  data = data.filter(d => d.estado == pesquisaEstado.value);
+  if (pesquisaDeliberacao.value)
+  data = data.filter(d =>
+    d.numero_deliberacao?.toLowerCase().includes(
+      pesquisaDeliberacao.value.toLowerCase()
+    )
+  );
+
+lista.innerHTML = "";
+
+data.forEach(d => {
+  lista.innerHTML += `
+<tr>
+<td>${d.id}</td>
+<td>${d.numero_deliberacao || "-"}</td>
+<td>${d.data_entrada ? d.data_entrada.split("T")[0] : "-"}</td>
+<td>${d.nome_requerente}</td>
+<td>
+  <button class="btn-edit" onclick='abrirParaEditar(${JSON.stringify(d)})' title="Editar">
+    <i class="fa-solid fa-pen-to-square"></i>
+  </button>
+
+  <button class="btn-view" onclick="ver(${d.id})" title="Ver">
+    <i class="fa-solid fa-eye"></i>
+  </button>
+
+  <button class="btn-delete" onclick="del(${d.id})" title="Eliminar">
+  <i class="fa-solid fa-trash"></i>
+</button>
+
+  <button class="btn-download" onclick="downloadDoc(${d.id})" title="Download">
+    <i class="fa-solid fa-download"></i>
+  </button>
+</td>
+</tr>`;
+});
+
+}
+let todosProcessos = [];
+/* ================= DASHBOARD ================= */
+async function dashboard(dataFiltrada = null) {
+
+let data;
+
+if (dataFiltrada) {
+
+    data = dataFiltrada;
+
+} else {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(API, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!res.ok) {
+
+        console.error("Erro no dashboard:", await res.text());
+
+        return;
+
+    }
+
+    data = await res.json();
+
+    // Guarda todos os processos
+    todosProcessos = data;
+
+}
+ // =====================
+// PREENCHER FILTROS
+// =====================
+
+const filtroAno = document.getElementById("filtroAno");
+const filtroPais = document.getElementById("filtroPais");
+
+// Limpa opções
+filtroAno.innerHTML = '<option value="">Todos</option>';
+filtroPais.innerHTML = '<option value="">Todos</option>';
+
+// Guardar anos e países sem repetir
+const listaAnos = [];
+const listaPaises = [];
+
+data.forEach(d => {
+
+    if(d.data_entrada){
+
+        const ano = new Date(d.data_entrada).getFullYear();
+
+        if(!listaAnos.includes(ano)){
+            listaAnos.push(ano);
+        }
+
+    }
+
+    if(d.pais_emissor){
+
+        if(!listaPaises.includes(d.pais_emissor)){
+            listaPaises.push(d.pais_emissor);
+        }
+
+    }
+
+});
+
+// Ordena
+listaAnos.sort();
+listaPaises.sort();
+
+// Adiciona anos
+listaAnos.forEach(ano => {
+
+    const option = document.createElement("option");
+
+    option.value = ano;
+
+    option.textContent = ano;
+
+    filtroAno.appendChild(option);
+
+});
+
+// Adiciona países
+listaPaises.forEach(pais => {
+
+    const option = document.createElement("option");
+
+    option.value = pais;
+
+    option.textContent = pais;
+
+    filtroPais.appendChild(option);
+
+});
+todosProcessos = data;
+
+totalDocs.innerText = data.length;
+deferidos.innerText = data.filter(d => d.estado == "Deferido").length;
+indeferidos.innerText = data.filter(d => d.estado == "Indeferido").length;
+tramite.innerText = data.filter(d => d.estado == "Em Trâmite").length;
+
+
+
+/* ================= ESTADOS ================= */
+
+if(chartEstados) chartEstados.destroy();
+
+chartEstados = new Chart(gEstado,{
+    type:"doughnut",
+    data:{
+        labels:["Deferido","Indeferido","Em Trâmite"],
+        datasets:[{
+   data:[
+      Number(deferidos.innerText),
+      Number(indeferidos.innerText),
+      Number(tramite.innerText)
+   ],
+   backgroundColor:[
+      "#1C6B47",   // Deferido — verde principal
+   "#A8412E",   // Indeferido — vermelho do sistema
+   "#B68D40"    // Em Trâmite — dourado
+   ],
+   borderWidth:0
+}]
+    },
+    options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+        legend:{
+            labels:{
+                color:"#1B2530"
+            }
+        }
+    }
+}
+});
+
+/* ================= PAÍSES ================= */
+
+let p={};
+
+data.forEach(d=>{
+    p[d.pais_emissor]=(p[d.pais_emissor]||0)+1;
+});
+
+if(chartPais) chartPais.destroy();
+
+chartPais = new Chart(gPais,{
+    type:"bar",
+    data:{
+        labels:Object.keys(p),
+        datasets:[{
+            label:"Processos por País",
+            data:Object.values(p),
+
+            backgroundColor:"#1C6B47",   // verde principal
+            borderRadius:8
+        }]
+    },
+    options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+        legend:{
+            labels:{
+                color:"#1B2530"
+            }
+        }
+    },
+
+    scales:{
+        x:{
+            ticks:{
+                color:"#1B2530"
+            },
+            grid:{
+                color:"rgba(15,30,45,0.08)"
+            }
+        },
+        y:{
+
+    beginAtZero:true,
+
+    ticks:{
+
+        color:"#1B2530",
+
+        stepSize:1,
+
+        precision:0
+
+    },
+
+    grid:{
+        color:"rgba(15,30,45,0.08)"
+    }
+
+}
+    }
+}
+});
+
+/* ================= GÉNERO ================= */
+
+let masc=0;
+let fem=0;
+
+data.forEach(d=>{
+    if(d.genero==="Masculino") masc++;
+    if(d.genero==="Feminino") fem++;
+});
+
+if(chartGenero) chartGenero.destroy();
+
+chartGenero = new Chart(gGenero,{
+    type:"pie",
+    data:{
+        labels:["Masculino","Feminino"],
+        datasets:[{
+    data:[masc,fem],
+    backgroundColor:[
+        "#0F4530",   // verde escuro — Masculino
+    "#B68D40"    // dourado — Feminino
+    ],
+    borderWidth:0
+}]
+    },
+    options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+        legend:{
+            labels:{
+                color:"#1B2530"
+            }
+        }
+    }
+}
+});
+
+/* ================= CONTINENTE ================= */
+
+let c = {
+    Africa: 0,
+    Europa: 0,
+    America: 0,
+    Asia: 0,
+    Oceania: 0
+};
+
+data.forEach(d => {
+
+    const cont = (d.continente || "")
+        .toLowerCase()
+        .trim();
+
+    if(cont === "africa")
+        c.Africa++;
+
+    else if(cont === "europa")
+        c.Europa++;
+
+    else if(cont === "america")
+        c.America++;
+
+    else if(cont === "asia")
+        c.Asia++;
+
+    else if(cont === "oceania")
+        c.Oceania++;
+
+});
+
+/* Atualizar números no mapa */
+
+const africaEl = document.getElementById("africaTotal");
+const europaEl = document.getElementById("europaTotal");
+const americaEl = document.getElementById("americaTotal");
+const asiaEl = document.getElementById("asiaTotal");
+const oceaniaEl = document.getElementById("oceaniaTotal");
+
+if(africaEl) africaEl.innerText = c.Africa;
+if(europaEl) europaEl.innerText = c.Europa;
+if(americaEl) americaEl.innerText = c.America;
+if(asiaEl) asiaEl.innerText = c.Asia;
+if(oceaniaEl) oceaniaEl.innerText = c.Oceania;
+/* ================= EVOLUÇÃO MENSAL ================= */
+
+const nomesMeses = [
+
+    "Jan",
+    "Fev",
+    "Mar",
+    "Abr",
+    "Mai",
+    "Jun",
+    "Jul",
+    "Ago",
+    "Set",
+    "Out",
+    "Nov",
+    "Dez"
+
+];
+
+// Inicializa todos os meses com zero
+let mes = {};
+
+nomesMeses.forEach(nome => {
+
+    mes[nome] = 0;
+
+});
+
+// Conta os processos
+data.forEach(d => {
+
+    if (!d.data_entrada) return;
+
+    let indiceMes =
+        new Date(d.data_entrada).getMonth();
+
+    let nomeMes =
+        nomesMeses[indiceMes];
+
+    mes[nomeMes]++;
+
+});
+
+if(chartMensal) chartMensal.destroy();
+
+chartMensal = new Chart(gMes,{
+
+    type:"line",
+
+    data:{
+
+        labels:nomesMeses,
+
+        datasets:[{
+
+            label:"Processos por Mês",
+
+            data:nomesMeses.map(nome => mes[nome]),
+
+           borderColor:"#1C6B47",
+    backgroundColor:"rgba(28,107,71,.18)",   // verde translúcido
+
+            fill:true,
+
+            tension:0.4,
+
+            borderWidth:3
+
+        }]
+
+    },
+
+    options:{
+
+        responsive:true,
+
+        maintainAspectRatio:false,
+
+        plugins:{
+
+            legend:{
+
+                labels:{
+
+                    color:"#1B2530"
+
+                }
+
+            }
+
+        },
+
+        scales:{
+
+            x:{
+
+                ticks:{
+
+                    color:"#1B2530"
+
+                },
+
+                grid:{
+
+                    color:"rgba(15,30,45,0.08)"
+
+                }
+
+            },
+
+            y:{
+
+                beginAtZero:true,
+
+                ticks:{
+
+                    color:"#1B2530",
+
+                    stepSize:1,
+
+                    precision:0
+
+                },
+
+                grid:{
+
+                    color:"rgba(15,30,45,0.08)"
+
+                }
+
+            }
+
+        }
+
+    }
+
+});
+/* ================= ANO ================= */
+let anos = {};
+
+data.forEach(d => {
+    if (!d.data_entrada) return;
+
+    let ano = new Date(d.data_entrada).getFullYear();
+    anos[ano] = (anos[ano] || 0) + 1;
+});
+
+const ctxAno = document.getElementById("graficoAno");
+
+if (!ctxAno) {
+    console.warn("graficoAno não existe no HTML");
+} else {
+
+    if (chartAno) chartAno.destroy();
+
+    chartAno = new Chart(ctxAno, {
+        type: "line",
+        data: {
+            labels: Object.keys(anos),
+            datasets:[{
+    label:"Processos por Ano",
+    data:Object.values(anos),
+     borderColor:"#B68D40",              // dourado, para diferenciar do gráfico mensal
+    backgroundColor:"rgba(182,141,64,.18)",
+    fill:true,
+    tension:0.4,
+    borderWidth:3
+}]
+        },
+        options:{
+    responsive:true,
+    maintainAspectRatio:false,
+
+    plugins:{
+        legend:{
+            labels:{
+                color:"#1B2530"
+            }
+        }
+    },
+
+    scales:{
+        x:{
+            ticks:{
+                color:"#1B2530"
+            },
+            grid:{
+                color:"rgba(15,30,45,0.08)"
+            }
+        },
+        y:{
+    beginAtZero:true,
+
+    ticks:{
+
+        color:"#1B2530",
+
+        stepSize:1,
+
+        precision:0
+
+    },
+
+    grid:{
+        color:"rgba(15,30,45,0.08)"
+    }
+}
+    }
+}
+    });
+
+}
+}
+
+/* ================= VER PROCESSO ================= */
+async function ver(id){
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(API + "/" + id + "/completo", {
+    headers:{
+      Authorization:`Bearer ${token}`
+    }
+  });
+
+  if(!res.ok){
+    alert("Erro ao carregar processo");
+    return;
+  }
+
+  const data = await res.json();
+
+  const proc = data.processo;
+  const doc = data.documentos[0];
+
+  modalBody.innerHTML = `
+  <b>${proc.nome_requerente}</b><br>
+  País: ${proc.pais_emissor}<br>
+  Estado: ${proc.estado}<br><br>
+
+  ${
+    doc
+    ? `<button onclick="visualizarDocumento(${doc.id})">
+         Visualizar Documento
+       </button>`
+    : 'Sem documento anexado'
+  }
+`;
+
+  modal.style.display = "flex";
+}
+
+async function visualizarDocumento(id){
+
+  const url = `http://localhost:3000/documentos/preview/${id}`;
+
+  const viewer = document.getElementById("viewer");
+  viewer.style.display = "block";
+  viewer.src = url;
+
+  modal.style.display = "flex";
+
+}
+function fecharModal(){
+
+  modal.style.display = "none";
+
+  const viewer = document.getElementById("viewer");
+  viewer.src = "";
+  viewer.style.display = "none";
+
+  modalBody.innerHTML = "";
+}
+/* ================= DELETE ================= */
+function del(id){
+  deleteId = id;
+  confirmModal.style.display = "flex";
+}
+/* ================= confirmar o delete ================= */
+async function confirmarDelete(){
+
+  const token = localStorage.getItem("token");
+
+  await fetch(API + "/" + deleteId, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  deleteId = null;
+  confirmModal.style.display = "none";
+
+  listar();
+  dashboard();
+}
+function fecharConfirm(){
+  deleteId = null;
+  confirmModal.style.display = "none";
+}
+async function downloadDoc(id){
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`http://localhost:3000/documentos/download/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if(!res.ok){
+    alert("Erro no download");
+    return;
+  }
+
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "documento.pdf";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+/* ================= DRAG DROP ================= */
+drop.ondragover=e=>e.preventDefault();
+
+drop.ondrop = e => {
+  e.preventDefault();
+
+  const dt = new DataTransfer();
+  for (let file of e.dataTransfer.files) {
+    dt.items.add(file);
+  }
+
+  ficheiro.files = dt.files;
+};
+
+const paises = [
+  "Afeganistão", "África do Sul", "Albânia", "Alemanha", "Andorra", "Angola",
+  "Antígua e Barbuda", "Arábia Saudita", "Argélia", "Argentina", "Arménia",
+  "Austrália", "Áustria", "Azerbaijão", "Bahamas", "Bahrein", "Bangladesh",
+  "Barbados", "Bélgica", "Belize", "Benim", "Bielorrússia", "Bolívia",
+  "Bósnia e Herzegovina", "Botswana", "Brasil", "Brunei", "Bulgária",
+  "Burkina Faso", "Burundi", "Cabo Verde", "Camarões", "Canadá", "Chile",
+  "China", "Colômbia", "Comores", "Congo", "Coreia do Norte",
+  "Coreia do Sul", "Costa do Marfim", "Costa Rica", "Croácia", "Cuba",
+  "Dinamarca", "Djibouti", "Dominica", "Egito", "El Salvador",
+  "Emirados Árabes Unidos", "Equador", "Eritreia", "Eslováquia",
+  "Eslovénia", "Espanha", "Estados Unidos", "Estónia", "Etiópia", "Fiji",
+  "Filipinas", "Finlândia", "França", "Gabão", "Gâmbia", "Gana", "Geórgia",
+  "Grécia", "Guatemala", "Guiné", "Guiné-Bissau", "Haiti", "Holanda",
+  "Honduras", "Hungria", "Índia", "Indonésia", "Irão", "Iraque", "Irlanda",
+  "Islândia", "Israel", "Itália", "Jamaica", "Japão", "Jordânia", "Kuwait",
+  "Laos", "Lesoto", "Letónia", "Líbano", "Libéria", "Líbia", "Lituânia",
+  "Luxemburgo", "Madagáscar", "Malásia", "Malawi", "Maldivas", "Mali",
+  "Malta", "Marrocos", "Maurícia", "Mauritânia", "México", "Moçambique",
+  "Moldávia", "Mónaco", "Mongólia", "Montenegro", "Namíbia", "Nepal",
+  "Nicarágua", "Níger", "Nigéria", "Noruega", "Nova Zelândia", "Omã",
+  "Países Baixos", "Paquistão", "Panamá", "Paraguai", "Peru", "Polónia",
+  "Portugal", "Qatar", "Quénia", "Reino Unido", "República Centro-Africana",
+  "República Dominicana", "República Checa", "Roménia", "Ruanda", "Rússia",
+  "São Tomé e Príncipe", "Senegal", "Sérvia", "Singapura", "Síria",
+  "Somália", "Sri Lanka", "Sudão", "Suécia", "Suíça", "Tailândia",
+  "Tanzânia", "Timor-Leste", "Togo", "Tunísia", "Turquia", "Ucrânia",
+  "Uganda", "Uruguai", "Venezuela", "Vietname", "Zâmbia", "Zimbabué"
+];
+function carregarPaises() {
+  const select = document.getElementById("pais");
+
+  select.innerHTML = '<option value="">Selecione o país</option>';
+
+  paises.sort().forEach(p => {
+    const option = document.createElement("option");
+    option.value = p;
+    option.textContent = p;
+    select.appendChild(option);
+  });
+}
+const paisParaContinente = {
+  // AFRICA
+  "Angola": "Africa",
+  "Argélia": "Africa",
+  "Benim": "Africa",
+  "Botswana": "Africa",
+  "Burkina Faso": "Africa",
+  "Burundi": "Africa",
+  "Cabo Verde": "Africa",
+  "Camarões": "Africa",
+  "Chade": "Africa",
+  "Comores": "Africa",
+  "Congo": "Africa",
+  "Costa do Marfim": "Africa",
+  "Djibouti": "Africa",
+  "Egito": "Africa",
+  "Eritreia": "Africa",
+  "Eswatini": "Africa",
+  "Etiópia": "Africa",
+  "Gabão": "Africa",
+  "Gâmbia": "Africa",
+  "Gana": "Africa",
+  "Guiné": "Africa",
+  "Guiné-Bissau": "Africa",
+  "Guiné Equatorial": "Africa",
+  "Lesoto": "Africa",
+  "Libéria": "Africa",
+  "Líbia": "Africa",
+  "Madagáscar": "Africa",
+  "Malawi": "Africa",
+  "Mali": "Africa",
+  "Marrocos": "Africa",
+  "Maurícia": "Africa",
+  "Mauritânia": "Africa",
+  "Moçambique": "Africa",
+  "Namíbia": "Africa",
+  "Níger": "Africa",
+  "Nigéria": "Africa",
+  "Quénia": "Africa",
+  "Ruanda": "Africa",
+  "São Tomé e Príncipe": "Africa",
+  "Senegal": "Africa",
+  "Serra Leoa": "Africa",
+  "Somália": "Africa",
+  "Sudão": "Africa",
+  "Tanzânia": "Africa",
+  "Togo": "Africa",
+  "Tunísia": "Africa",
+  "Uganda": "Africa",
+  "Zâmbia": "Africa",
+  "Zimbabué": "Africa",
+
+  // EUROPA
+  "Alemanha": "Europa",
+  "Albânia": "Europa",
+  "Andorra": "Europa",
+  "Áustria": "Europa",
+  "Bélgica": "Europa",
+  "Bielorrússia": "Europa",
+  "Bósnia e Herzegovina": "Europa",
+  "Bulgária": "Europa",
+  "Croácia": "Europa",
+  "Dinamarca": "Europa",
+  "Eslováquia": "Europa",
+  "Eslovénia": "Europa",
+  "Espanha": "Europa",
+  "Estónia": "Europa",
+  "Finlândia": "Europa",
+  "França": "Europa",
+  "Grécia": "Europa",
+  "Hungria": "Europa",
+  "Irlanda": "Europa",
+  "Islândia": "Europa",
+  "Itália": "Europa",
+  "Letónia": "Europa",
+  "Lituânia": "Europa",
+  "Luxemburgo": "Europa",
+  "Malta": "Europa",
+  "Moldávia": "Europa",
+  "Mónaco": "Europa",
+  "Montenegro": "Europa",
+  "Noruega": "Europa",
+  "Países Baixos": "Europa",
+  "Polónia": "Europa",
+  "Portugal": "Europa",
+  "Reino Unido": "Europa",
+  "República Checa": "Europa",
+  "Roménia": "Europa",
+  "Rússia": "Europa",
+  "Sérvia": "Europa",
+  "Suécia": "Europa",
+  "Suíça": "Europa",
+  "Ucrânia": "Europa",
+
+  // AMERICA
+  "Argentina": "America",
+  "Bolívia": "America",
+  "Brasil": "America",
+  "Canadá": "America",
+  "Chile": "America",
+  "Colômbia": "America",
+  "Costa Rica": "America",
+  "Cuba": "America",
+  "Equador": "America",
+  "El Salvador": "America",
+  "Estados Unidos": "America",
+  "Guatemala": "America",
+  "Haiti": "America",
+  "Honduras": "America",
+  "Jamaica": "America",
+  "México": "America",
+  "Nicarágua": "America",
+  "Panamá": "America",
+  "Paraguai": "America",
+  "Peru": "America",
+  "República Dominicana": "America",
+  "Uruguai": "America",
+  "Venezuela": "America",
+
+  // ASIA
+  "Afeganistão": "Asia",
+  "Arábia Saudita": "Asia",
+  "Arménia": "Asia",
+  "Azerbaijão": "Asia",
+  "Bahrein": "Asia",
+  "Bangladesh": "Asia",
+  "Brunei": "Asia",
+  "China": "Asia",
+  "Coreia do Norte": "Asia",
+  "Coreia do Sul": "Asia",
+  "Emirados Árabes Unidos": "Asia",
+  "Filipinas": "Asia",
+  "Geórgia": "Asia",
+  "Índia": "Asia",
+  "Indonésia": "Asia",
+  "Irão": "Asia",
+  "Iraque": "Asia",
+  "Israel": "Asia",
+  "Japão": "Asia",
+  "Jordânia": "Asia",
+  "Kuwait": "Asia",
+  "Laos": "Asia",
+  "Líbano": "Asia",
+  "Malásia": "Asia",
+  "Mongólia": "Asia",
+  "Myanmar": "Asia",
+  "Nepal": "Asia",
+  "Omã": "Asia",
+  "Paquistão": "Asia",
+  "Qatar": "Asia",
+  "Singapura": "Asia",
+  "Sri Lanka": "Asia",
+  "Síria": "Asia",
+  "Tailândia": "Asia",
+  "Timor-Leste": "Asia",
+  "Turquia": "Asia",
+  "Vietname": "Asia",
+
+  // OCEANIA
+  "Austrália": "Oceania",
+  "Fiji": "Oceania",
+  "Nova Zelândia": "Oceania",
+  "Papua-Nova Guiné": "Oceania"
+};
+/* INIT */
+dashboard();
+listar();
+carregarPaises();
+document.getElementById("pais").addEventListener("change", function () {
+
+    const paisSelecionado = this.value;
+
+    const continenteSelecionado =
+        paisParaContinente[paisSelecionado];
+
+    document.getElementById("continente").value =
+        continenteSelecionado || "";
+
+});
+const utilizador = JSON.parse(
+    localStorage.getItem("utilizador")
+);
+
+if(utilizador){
+
+    document.getElementById("userNome").textContent =
+        utilizador.nome;
+
+    document.getElementById("userEmail").textContent =
+        utilizador.email;
+
+    document.getElementById("welcomeText").textContent =
+        `Bem-vindo(a), ${utilizador.nome} `;
+
+    document.getElementById("avatarUser").textContent =
+        utilizador.nome.charAt(0).toUpperCase();
+}
+const hoje = new Date();
+
+document.getElementById("dataHoje").textContent =
+    hoje.toLocaleDateString("pt-PT");
+
+    async function carregarLogs() {
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    "http://localhost:3000/documentos/logs",
+    {
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    }
+  );
+
+  if(!res.ok){
+    alert("Erro ao carregar logs");
+    return;
+  }
+
+  const logs = await res.json();
+
+  document.getElementById("totalLogs").innerText =
+    logs.length;
+
+  const tabela =
+    document.getElementById("listaLogs");
+
+  tabela.innerHTML = "";
+
+  logs.forEach(log => {
+
+    tabela.innerHTML += `
+      <tr>
+        <td>
+          ${new Date(log.data_acao)
+            .toLocaleString("pt-PT")}
+        </td>
+
+        <td>${log.nome || "-"}</td>
+
+        <td>${log.acao}</td>
+
+        <td>${log.descricao}</td>
+      </tr>
+    `;
+
+  });
+
+}
+async function carregarNotificacao() {
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(
+    "http://localhost:3000/notificacao",
+    {
+      headers:{
+        Authorization:`Bearer ${token}`
+      }
+    }
+  );
+
+  if(!res.ok){
+    alert("Erro ao carregar notificacao");
+    return;
+  }
+
+  const notificacoes = await res.json();
+
+  document.getElementById("totalNotificacoes").innerText =
+    notificacoes.length;
+
+  document.getElementById("naoLidas").innerText =
+    notificacoes.filter(n => !n.lida).length;
+
+  document.getElementById("alertas").innerText =
+    notificacoes.filter(n => n.tipo === "ALERTA").length;
+
+  const tabela =
+    document.getElementById("listaNotificacoes");
+
+  tabela.innerHTML = "";
+
+  notificacoes.forEach(n => {
+
+    tabela.innerHTML += `
+      <tr>
+        <td>
+          ${new Date(n.data_criacao)
+            .toLocaleString("pt-PT")}
+        </td>
+
+        <td>${n.tipo}</td>
+
+        <td>${n.mensagem}</td>
+
+        <td>
+          ${n.lida ? '✅ Lida' : '🔴 Nova'}
+        </td>
+      </tr>
+    `;
+  });
+
+}
+function carregarConfiguracoes(){
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("utilizador")
+        );
+
+    if(!user) return;
+
+    document.getElementById("cfgNome").innerText =
+        user.nome;
+
+    document.getElementById("cfgEmail").innerText =
+        user.email;
+}
+window.onload = () => {
+
+    mostrar("dashboard");
+
+};
+async function salvarPerfil(){
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("utilizador")
+        );
+
+    const nome =
+        document.getElementById("cfgNome").value;
+
+    const email =
+        document.getElementById("cfgEmail").value;
+
+    try{
+
+        const res =
+            await fetch(
+                "http://localhost:3000/auth/perfil",
+                {
+                    method:"PUT",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+
+                        emailAtual:user.email,
+
+                        nome,
+
+                        email
+
+                    })
+                }
+            );
+
+        const data =
+            await res.json();
+
+        if(res.ok){
+
+            user.nome = nome;
+            user.email = email;
+
+            localStorage.setItem(
+                "utilizador",
+                JSON.stringify(user)
+            );
+
+            alert(data.mensagem);
+
+        }else{
+
+            alert(data.mensagem);
+
+        }
+
+    }catch(erro){
+
+        alert("Erro ao ligar ao servidor.");
+
+    }
+
+}
+function carregarPerfil(){
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("utilizador")
+        );
+
+    if(!user) return;
+
+    document.getElementById("cfgNome").value =
+        user.nome;
+
+    document.getElementById("cfgEmail").value =
+        user.email;
+
+}
+function alternarTema(){
+
+    document.body.classList.toggle(
+        "light-mode"
+    );
+
+    localStorage.setItem(
+        "tema",
+        document.body.classList.contains(
+            "light-mode"
+        )
+    );
+}
+if(
+    localStorage.getItem("tema")
+    === "true"
+){
+    document.body.classList.add(
+        "light-mode"
+    );
+}
+async function alterarSenha(){
+
+    const user =
+        JSON.parse(
+            localStorage.getItem("utilizador")
+        );
+
+    const senhaAtual =
+        document.getElementById("senhaAtual").value;
+
+    const novaSenha =
+        document.getElementById("novaSenha").value;
+
+    const confirmarSenha =
+        document.getElementById("confirmarSenha").value;
+
+    const msg =
+        document.getElementById("msgSenha");
+
+    if(novaSenha !== confirmarSenha){
+
+        msg.style.color = "red";
+
+        msg.innerText =
+            "As senhas não coincidem.";
+
+        return;
+    }
+
+    try{
+
+        const res =
+            await fetch(
+                "http://localhost:3000/auth/alterar-senha",
+                {
+                    method:"PUT",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        email:user.email,
+                        senhaAtual,
+                        novaSenha
+                    })
+                }
+            );
+
+        const data =
+            await res.json();
+
+        if(res.ok){
+
+    msg.style.color = "lightgreen";
+    msg.innerText = data.mensagem;
+
+    // Limpar campos
+    document.getElementById("senhaAtual").value = "";
+    document.getElementById("novaSenha").value = "";
+    document.getElementById("confirmarSenha").value = "";
+
+}else{
+
+    msg.style.color = "red";
+    msg.innerText = data.mensagem;
+
+}
+
+    }catch(erro){
+
+        msg.style.color = "red";
+
+        msg.innerText =
+            "Erro ao ligar ao servidor";
+
+    }
+
+}
+function fazerBackup(){
+
+    window.open(
+        "http://localhost:3000/backup/backup",
+        "_blank"
+    );
+
+}
+async function restaurarBackup(){
+
+    const ficheiro =
+        document.getElementById("ficheiroBackup").files[0];
+
+    if(!ficheiro){
+        alert("Escolha um ficheiro.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("backup", ficheiro);
+
+    try{
+
+        const resposta = await fetch(
+            "http://localhost:3000/restore/restore",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const dados = await resposta.json();
+
+        console.log(dados);
+
+        if(!resposta.ok){
+
+            alert(
+                dados.erro || dados.mensagem
+            );
+
+            return;
+        }
+
+        alert(dados.mensagem);
+
+    }catch(e){
+
+        console.error(e);
+
+        alert(e.message);
+
+    }
+
+}
+function exportarExcel(){
+
+    window.open(
+        "http://localhost:3000/relatorio/excel",
+        "_blank"
+    );
+
+}
+function abrirFiltros(){
+
+    document.getElementById("modalFiltros").style.display = "flex";
+
+}
+
+function fecharFiltros(){
+
+    document.getElementById("modalFiltros").style.display = "none";
+
+}
+function aplicarFiltros(){
+
+    let ano =
+        document.getElementById("filtroAno").value;
+
+    let pais =
+        document.getElementById("filtroPais").value;
+
+    let estado =
+        document.getElementById("filtroEstado").value;
+
+    let grau =
+        document.getElementById("filtroGrau").value;
+
+    let dadosFiltrados =
+        todosProcessos.filter(p=>{
+
+            let ok = true;
+
+            // Ano
+            if(ano){
+
+                ok =
+                    ok &&
+                    new Date(
+                        p.data_entrada
+                    ).getFullYear()==ano;
+
+            }
+
+            // País
+            if(pais){
+
+                ok =
+                    ok &&
+                    p.pais_emissor==pais;
+
+            }
+
+            // Estado
+            if(estado){
+
+                ok =
+                    ok &&
+                    p.estado==estado;
+
+            }
+
+            // Grau
+            if(grau){
+
+                ok =
+                    ok &&
+                    p.grau_academico==grau;
+
+            }
+
+            return ok;
+
+        });
+
+    // Atualiza o dashboard usando apenas os dados filtrados
+dashboard(dadosFiltrados);
+
+// Fecha o modal
+fecharFiltros();
+
+}
+</script>
+</body>
+</html>
